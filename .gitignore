@@ -1,0 +1,7 @@
+infrastructure/**/*
+/venv
+.env
+
+
+# Ignore all files in folders withing infrastructure
+
