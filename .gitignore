@@ -1,7 +1,3 @@
-infrastructure/**/*
+*.sql
 /venv
 .env
-
-
-# Ignore all files in folders withing infrastructure
-
