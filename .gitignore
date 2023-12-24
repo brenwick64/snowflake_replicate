@@ -1,6 +1,8 @@
+*.pyc
 *.py.gz
 *.sql
 *.csv.gz
 *.csv
 /venv
 .env
+/archive

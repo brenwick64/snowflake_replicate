@@ -40,12 +40,12 @@ class InfrastructureDeepCopy:
             return obj_list
     
     def __get_primary_object_ddl(self, obj: dict, config: dict):
-        print(f'        Copying: {config["label"]} {obj}')
+        print(f'        Copying DDL - {config["label"]} {obj}')
         ddl = self.session.sql(f"SELECT GET_DDL('{config['label']}', '{obj}{'()' if config['label'] == 'PROCEDURE' else ''}')").to_pandas().iloc[:, 0].values.flatten()[0]
         return { "name" : obj, "ddl" : ddl }
 
     def __get_stream_ddl(self, obj: dict, config: dict):
-        print(f'        Copying: {config["label"]} {obj}')
+        print(f'        Copying DDL - {config["label"]} {obj}')
         with self.session.query_history() as query_history:
             self.session.sql(f"DESC {config['label']} {obj}").collect()
             query_id = "'" + query_history.queries[0][0] + "'"
@@ -57,7 +57,7 @@ class InfrastructureDeepCopy:
                 
 
     def __get_task_ddl(self, obj: list, config: dict):
-        print(f'        Copying: {config["label"]} {obj}')
+        print(f'        Copying DDL - {config["label"]} {obj}')
         with self.session.query_history() as query_history:
             self.session.sql(f"DESC {config['label']} {obj}").collect()
             query_id = "'" + query_history.queries[0][0] + "'"
@@ -75,7 +75,7 @@ class InfrastructureDeepCopy:
                 
                 
     def __get_stage_ddl(self, obj: list, config: dict):
-        print(f'        Copying: {config["label"]} {obj}')
+        print(f'        Copying DDL - {config["label"]} {obj}')
         
         # Construct DDL
         ddl_statement = f"CREATE OR REPLACE STAGE {obj};"
@@ -84,7 +84,7 @@ class InfrastructureDeepCopy:
         
     def __write_ddl_to_file(self, ddl_list: dict, config: dict):
         for ddl_entry in ddl_list:
-            with open(f'infrastructure/{config["plural"].lower()}/{ddl_entry["name"]}.sql', 'w') as f:
+            with open(f'snowflake/infrastructure/{config["plural"].lower()}/{ddl_entry["name"]}.sql', 'w') as f:
                 f.write(ddl_entry["ddl"])
                 
     def deep_copy(self):

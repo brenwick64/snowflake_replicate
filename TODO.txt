@@ -1,0 +1,1 @@
+- Handle 0 length stage and table data cases
