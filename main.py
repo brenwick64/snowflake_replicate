@@ -125,3 +125,6 @@ if __name__ == '__main__':
     
     """ Archive Data & Infrastructure """
     copy_files(source_path='snowflake', destination_path=f'archive/{os.getenv("SNOWFLAKE_DATABASE").lower()}-{os.getenv("SNOWFLAKE_SCHEMA").lower()}')
+    
+    
+    

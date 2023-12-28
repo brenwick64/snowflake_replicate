@@ -26,7 +26,12 @@ class DataDeepCopy:
         print('\n\nExtracting Stage Data')
         for stage in self.__get_all_stages():
             print(f'    Copying Data - Stage: {stage}')
-            self.session.file.get(f"@{stage.lower()}", f"snowflake/data/stage_data/{stage}")
+            try:
+                self.session.file.get(f"@{stage.lower()}", f"snowflake/data/stage_data/{stage}")
+            except Exception as e:
+                print(f'        ERROR: {e}')
+                print(f'    Skipping Stage: {stage}')
+                continue
            
         print('\n\nExtracting Table Data') 
         for table in self.__get_all_tables():
