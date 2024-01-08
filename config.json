@@ -1,0 +1,17 @@
+{
+    "copyManifest" : [
+        {
+            "type" : "infrastructure",
+            "module" : "FILE_FORMAT",
+            "path" : "./staging/infrastructure/file_formats/"
+        },
+        {
+            "type" : "data",
+            "path" : "./staging/infrastructure/stages/"
+        },
+        {
+            "type" : "command",
+            "path" : "./staging/infrastructure/stages/"
+        }
+    ]
+}

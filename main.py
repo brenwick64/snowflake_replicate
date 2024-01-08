@@ -5,6 +5,7 @@ from datetime import datetime
 from snowflake.snowpark import Session
 from modules.InfrastructureDeepCopy import InfrastructureDeepCopy
 from modules.DataDeepCopy import DataDeepCopy
+from modules.snowflake_extractor import SnowflakeExtractor
 load_dotenv() 
 
 infrastructure_folders = [
@@ -22,49 +23,14 @@ data_folders = [
     "stage_data"
 ]
 
-object_configs = [
-    {
-        "label" : "TABLE",
-        "plural": "TABLES",
-        "field_name" : "TABLE_NAME",
-        "conditions" : [f"TABLE_SCHEMA = '{os.getenv('SNOWFLAKE_SCHEMA')}'", "TABLE_TYPE = 'BASE TABLE'"]
-    },
-    {
-        "label" : "VIEW",
-        "plural": "VIEWS",
-        "field_name" : "TABLE_NAME",
-        "conditions" : [f"TABLE_SCHEMA = '{os.getenv('SNOWFLAKE_SCHEMA')}'"]
-    },
-    {
-        "label" : "FILE_FORMAT",
-        "plural": "FILE_FORMATS",
-        "field_name" : "FILE_FORMAT_NAME",
-        "conditions" : [f"FILE_FORMAT_SCHEMA = '{os.getenv('SNOWFLAKE_SCHEMA')}'", "FILE_FORMAT_NAME NOT LIKE '%temp%'"]
-    },
-    {
-        "label" : "PROCEDURE",
-        "plural": "PROCEDURES",
-        "field_name" : "PROCEDURE_NAME",
-        "conditions" : [f"PROCEDURE_SCHEMA = '{os.getenv('SNOWFLAKE_SCHEMA')}'"]
-    },
-    {
-        "label" : "STREAM",
-        "plural": "STREAMS",
-        "field_name" : "name",
-        "conditions" : []
-    },
-    {
-        "label" : "TASK",
-        "plural": "TASKS",
-        "field_name" : "name",
-        "conditions" : []
-    },
-    {
-        "label" : "STAGE",
-        "plural": "STAGES",
-        "field_name" : "name",
-        "conditions" : []
-    }
+snowflake_objects = [
+    'TABLE',
+    'VIEW',
+    'FILE_FORMAT',
+    'PROCEDURE',
+    'STREAM',
+    'TASK',
+    'STAGE'
 ]
 
 def setup_folders():
@@ -91,7 +57,7 @@ def setup_folders():
 def copy_files(source_path, destination_path):
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     shutil.copytree(source_path, f'{destination_path}-{timestamp}')
-    print(f'Copied files to archive folder: {destination_path}-{timestamp}')
+    print(f'\nCopied files to archive folder: {destination_path}-{timestamp}')
 
 if __name__ == '__main__':
     
@@ -113,18 +79,34 @@ if __name__ == '__main__':
     
     setup_folders()
     
-    """ Infrastructure  Copy """
-    print('\n """ Infrastructure  Copy """ ')
-    infra_copy = InfrastructureDeepCopy(session=session, configs_list=object_configs)
-    infra_copy.deep_copy()
+    s = SnowflakeExtractor(session=session, database=os.getenv("SNOWFLAKE_DATABASE"), schema=os.getenv("SNOWFLAKE_SCHEMA"))
     
-    """ Data Copy """
-    print('\n """ Data Copy """ ')
-    data_copy = DataDeepCopy(session=session)
-    data_copy.deep_copy()
+    """ Infrastructure Copy """
+    print('\n """ Infrastructure Copy """ ')
+    for obj in snowflake_objects:
+        print(f'\n{obj}S\n')
+        object_list = s.get_object_list(obj)
+        print(f'Found {len(object_list)} {obj.lower()}s')
+
+        for object_name in object_list:
+            print(f'Extracting DDL for {obj}: {object_name}')
+            object_ddl = s.get_object_ddl(obj, object_name)
+            if object_ddl:
+                with open(f'snowflake/infrastructure/{obj.lower()}s/{object_name}.sql', 'w') as f:
+                    f.write(object_ddl)
+                    f.close()
+            else:
+                print(f'No DDL found for {obj}: {object_name}')
+
+    
+    # """ Data Copy """
+    # print('\n """ Data Copy """ ')
+    # data_copy = DataDeepCopy(session=session)
+    # data_copy.deep_copy()
     
     """ Archive Data & Infrastructure """
     copy_files(source_path='snowflake', destination_path=f'archive/{os.getenv("SNOWFLAKE_DATABASE").lower()}-{os.getenv("SNOWFLAKE_SCHEMA").lower()}')
+    
     
     
     
