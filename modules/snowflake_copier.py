@@ -1,6 +1,7 @@
 from snowflake.snowpark import Session
+import pandas as pd
 
-class SnowflakeExtractor:
+class SnowflakeCopier:
     
     def __init__(self, session: Session, database: str, schema: str) -> None:
         self.session = session
@@ -90,5 +91,18 @@ class SnowflakeExtractor:
             object_ddl = self.session.sql(f'SELECT * FROM table(result_scan({query_id}))').to_pandas().iloc[:, 0].values.flatten()[0]
             
             return object_ddl
-
         
+        
+    def save_table_data(self, table_name: str, target_directory) -> pd.DataFrame:
+        df = self.session.sql(f"SELECT * FROM {table_name};").to_pandas()
+        try:
+            df.to_csv(f'{target_directory}.csv', index=False)
+        except Exception as e:
+            raise e        
+    
+    
+    def save_stage_data(self, stage_name: str, target_directory: str) -> None:
+        try:
+            self.session.file.get(f'@{stage_name.lower()}', f'{target_directory}')
+        except Exception as e:
+            raise e

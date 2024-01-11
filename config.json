@@ -1,5 +1,31 @@
 {
-    "copyManifest" : [
+    "config" : {
+        "snowflake_objects" : [
+            "TABLE",
+            "VIEW",
+            "FILE_FORMAT",
+            "PROCEDURE",
+            "STREAM",
+            "TASK",
+            "STAGE"
+        ],
+        "staging_directory" : "staging",
+        "infrastructure_folders" : [
+            "tables",
+            "views",
+            "file_formats",
+            "procedures",
+            "streams",
+            "tasks",
+            "stages"
+        ],
+        "data_folders" : [
+            "tables",
+            "stages"
+        ]
+    },
+
+    "buildManifest" : [
         {
             "type" : "infrastructure",
             "module" : "FILE_FORMAT",
