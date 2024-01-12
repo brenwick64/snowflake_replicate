@@ -25,19 +25,51 @@
         ]
     },
 
-    "buildManifest" : [
+    "build_manifest" : [
         {
             "type" : "infrastructure",
-            "module" : "FILE_FORMAT",
+            "name" : "FILE_FORMAT",
             "path" : "./staging/infrastructure/file_formats/"
         },
         {
-            "type" : "data",
+            "type" : "infrastructure",
+            "name" : "STAGE",
             "path" : "./staging/infrastructure/stages/"
         },
         {
-            "type" : "command",
-            "path" : "./staging/infrastructure/stages/"
+            "type" : "data",
+            "name" : "STAGE",
+            "path" : "./staging/data/stages/"
+        },
+        {
+            "type" : "infrastructure",
+            "name" : "TABLE",
+            "path" : "./staging/infrastructure/tables/"
+        },
+        {
+            "type" : "data",
+            "name" : "TABLE",
+            "path" : "./staging/data/tables/"
+        },
+        {
+            "type" : "infrastructure",
+            "name" : "VIEW",
+            "path" : "./staging/infrastructure/views/"
+        },
+        {
+            "type" : "infrastructure",
+            "name" : "PROCEDURE",
+            "path" : "./staging/infrastructure/procedures/"
+        },
+        {
+            "type" : "infrastructure",
+            "name" : "STREAM",
+            "path" : "./staging/infrastructure/streams/"
+        },
+        {
+            "type" : "infrastructure",
+            "name" : "TASK",
+            "path" : "./staging/infrastructure/tasks/"
         }
     ]
 }
