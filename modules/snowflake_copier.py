@@ -75,6 +75,7 @@ class SnowflakeCopier:
                                              WHERE 1=1 AND {" AND ".join(self.sql_mappings[snowflake_object_type]["list_conditions"])}'
                                             ).to_pandas().iloc[:, 0].values.flatten().tolist()
             
+            
             return object_list
         
         

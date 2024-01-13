@@ -7,7 +7,7 @@ from snowflake.snowpark import Session
 from modules.snowflake_paster import SnowflakePaster
 
 # Load environment variables & local files
-load_dotenv() 
+load_dotenv(override=True) 
 with open('config.json') as f:
     manifest = json.load(f)['build_manifest']
 

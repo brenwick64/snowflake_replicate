@@ -1,0 +1,7 @@
+TODO:
+
+Features:
+    - Add multiple manifests for each snowflake role to enable proper RBAC configuration
+        EX: 
+            ORGADMIN for: SELECT SYSTEM$ANACONDA_TERMS('ACCEPT');
+            SYSADMIN for: creating Snowflake objects

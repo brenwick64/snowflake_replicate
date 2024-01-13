@@ -7,7 +7,7 @@ from snowflake.snowpark import Session
 from modules.snowflake_copier import SnowflakeCopier
 
 # Load environment variables & local files
-load_dotenv() 
+load_dotenv(override=True)
 with open('config.json') as f:
     config = json.load(f)['config']
     
@@ -42,9 +42,10 @@ def setup_folders():
         os.makedirs(f'{data_path}/{folder}')
     
 def archive_warehouse(source_path, destination_path):
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    shutil.copytree(source_path, f'{destination_path}-{timestamp}')
-    print(f'\nCopied files to archive folder: {destination_path}-{timestamp}')
+    timestamp = datetime.now().strftime("%Y-%m-%d__%H-%M-%S")
+    filename = f'{destination_path}__{timestamp}'
+    shutil.copytree(source_path, filename)
+    print(f'\nCopied files to archive fold, {filename}')
 
 if __name__ == '__main__':
     
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     "database": os.getenv("SNOWFLAKE_COPY_DATABASE"),
     "schema": os.getenv("SNOWFLAKE_COPY_SCHEMA"),
     }
-    
+        
     try:
         session = Session.builder.configs(connection_parameters).create()
     except Exception as e:  
@@ -66,7 +67,8 @@ if __name__ == '__main__':
     
     setup_folders()
     
-    s = SnowflakeCopier(session=session, database=os.getenv("SNOWFLAKE_DATABASE"), schema=os.getenv("SNOWFLAKE_SCHEMA"))
+    s = SnowflakeCopier(session=session, database=os.getenv("SNOWFLAKE_COPY_DATABASE"), schema=os.getenv("SNOWFLAKE_COPY_SCHEMA"))
+    print(s.session)
     
     # Infrastructure Deep Copy
     print('\n """ Infrastructure Copy """ ')
@@ -116,5 +118,5 @@ if __name__ == '__main__':
     
     
     """ Archive Data & Infrastructure """
-    archive_warehouse(source_path=STAGING_DIRECTORY, destination_path=f'archive/{os.getenv("SNOWFLAKE_DATABASE").lower()}-{os.getenv("SNOWFLAKE_SCHEMA").lower()}')
+    archive_warehouse(source_path=STAGING_DIRECTORY, destination_path=f'archive/{os.getenv("SNOWFLAKE_COPY_DATABASE").lower()}_{os.getenv("SNOWFLAKE_COPY_SCHEMA").lower()}')
     

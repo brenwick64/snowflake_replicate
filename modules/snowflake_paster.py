@@ -23,14 +23,14 @@ class SnowflakePaster:
                 result = session.sql(ddl).collect()
                 results.append(result[0][0])                
         return results  
-                
-                
+                            
     def __process_data(self, session: Session, step: dict):
     
-        def process_stage_data():
+        def process_stage_data() -> list:
             results = []
             stage_dir = f'{self.staging_dir}/{step["path"]}'
             for stage_folder in os.listdir(stage_dir):
+                # For each files in the stage folder, upload it to the stage
                 for stage_file in os.listdir(f'{stage_dir}/{stage_folder}'):
                     sql_statement = f'PUT file://{stage_dir}/{stage_folder}/{stage_file} @{stage_folder}'
                     result = session.sql(sql_statement).collect()
@@ -40,9 +40,10 @@ class SnowflakePaster:
                     
             return results
                     
-        def process_table_data():
+        def process_table_data() -> list:
             results = []
             table_dir = f'{self.staging_dir}/{step["path"]}'
+            # For each file in the table's folder, convert csv to pandas dataframe and load it to the Snowflake table
             for table_name in os.listdir(table_dir):
                 pandas_df = pd.read_csv(f'{table_dir}/{table_name}')
                 try:
@@ -63,8 +64,15 @@ class SnowflakePaster:
         return results
                                 
         
-    #TODO
-    def __process_command(self, session: Session, step: dict):
-        pass
-    
-
+    def __process_command(self, session: Session, step: dict) -> list:
+        results = []
+        command_dir = f'{self.staging_dir}/{step["path"]}'
+        # For each command, execute sql and log the result
+        for command_file in os.listdir(command_dir):
+            with open(f'{command_dir}/{command_file}') as f:
+                sql_statement = f.read()
+                result = session.sql(sql_statement).collect()
+                results.append(f'{command_file} - {result[0][0]}')            
+            
+        return results
+        
