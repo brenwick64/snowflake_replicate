@@ -49,13 +49,13 @@ def archive_warehouse(source_path, destination_path):
 if __name__ == '__main__':
     
     connection_parameters = {
-    "account": os.getenv("SNOWFLAKE_ACCOUNT"),
-    "user": os.getenv("SNOWFLAKE_USERNAME"),
-    "password": os.getenv("SNOWFLAKE_PASSWORD"),
-    "role": os.getenv("SNOWFLAKE_ROLE"),
-    "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
-    "database": os.getenv("SNOWFLAKE_DATABASE"),
-    "schema": os.getenv("SNOWFLAKE_SCHEMA"),
+    "account": os.getenv("SNOWFLAKE_COPY_ACCOUNT"),
+    "user": os.getenv("SNOWFLAKE_COPY_USERNAME"),
+    "password": os.getenv("SNOWFLAKE_COPY_PASSWORD"),
+    "role": os.getenv("SNOWFLAKE_COPY_ROLE"),
+    "warehouse": os.getenv("SNOWFLAKE_COPY_WAREHOUSE"),
+    "database": os.getenv("SNOWFLAKE_COPY_DATABASE"),
+    "schema": os.getenv("SNOWFLAKE_COPY_SCHEMA"),
     }
     
     try:

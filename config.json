@@ -29,47 +29,47 @@
         {
             "type" : "infrastructure",
             "name" : "FILE_FORMAT",
-            "path" : "./staging/infrastructure/file_formats/"
+            "path" : "infrastructure/file_formats/"
         },
         {
             "type" : "infrastructure",
             "name" : "STAGE",
-            "path" : "./staging/infrastructure/stages/"
+            "path" : "infrastructure/stages/"
         },
         {
             "type" : "data",
             "name" : "STAGE",
-            "path" : "./staging/data/stages/"
+            "path" : "data/stages/"
         },
         {
             "type" : "infrastructure",
             "name" : "TABLE",
-            "path" : "./staging/infrastructure/tables/"
+            "path" : "infrastructure/tables/"
         },
         {
             "type" : "data",
             "name" : "TABLE",
-            "path" : "./staging/data/tables/"
+            "path" : "data/tables/"
         },
         {
             "type" : "infrastructure",
             "name" : "VIEW",
-            "path" : "./staging/infrastructure/views/"
+            "path" : "infrastructure/views/"
         },
         {
             "type" : "infrastructure",
             "name" : "PROCEDURE",
-            "path" : "./staging/infrastructure/procedures/"
+            "path" : "infrastructure/procedures/"
         },
         {
             "type" : "infrastructure",
             "name" : "STREAM",
-            "path" : "./staging/infrastructure/streams/"
+            "path" : "infrastructure/streams/"
         },
         {
             "type" : "infrastructure",
             "name" : "TASK",
-            "path" : "./staging/infrastructure/tasks/"
+            "path" : "infrastructure/tasks/"
         }
     ]
 }
