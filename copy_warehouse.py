@@ -75,6 +75,7 @@ if __name__ == '__main__':
         
     try:
         session = Session.builder.configs(connection_parameters).create()
+        print(f'\nConnected to Snowflake Account: {connection_parameters["account"]}\n')
     except Exception as e:  
         print(f'Error: {e}')
         exit()
@@ -94,8 +95,8 @@ if __name__ == '__main__':
     s.set_schema(active_schema)
     
     
-    # Infrastructure Deep Copy
-    print('\n """ Infrastructure Copy """ ')
+    # Infrastructure
+    print(f'\n\n **COPYING ALL SNOWFLAKE OBJECTS FOR: {s.get_database()}.{s.get_schema()}**')
     
     # For each object type, get a list of objects in the Snowflake environment
     for obj in SNOWFLAKE_OBJECTS:
@@ -114,7 +115,8 @@ if __name__ == '__main__':
             else:
                 print(f'No DDL found for {obj}: {object_name}')
                 
-    print('\n """ Data Copy """ ')
+                
+    print(f'\n\n **COPYING ALL DATA FOR: {s.get_database()}.{s.get_schema()}**')
     
     # Extract and write all table data to csv files
     print('\nTABLES\n')
