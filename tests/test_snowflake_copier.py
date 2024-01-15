@@ -10,17 +10,17 @@ class TestSnowflakeCopier(unittest.TestCase):
     def setUp(self):
         # Set up a Snowflake session for testing
         connection_parameters = {
-            "account": os.getenv("SNOWFLAKE_ACCOUNT"),
-            "user": os.getenv("SNOWFLAKE_USERNAME"),
-            "password": os.getenv("SNOWFLAKE_PASSWORD"),
-            "role": os.getenv("SNOWFLAKE_ROLE"),
-            "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
-            "database": os.getenv("SNOWFLAKE_DATABASE"),
-            "schema": os.getenv("SNOWFLAKE_SCHEMA")
+            "account": os.getenv("SNOWFLAKE_COPY_ACCOUNT"),
+            "user": os.getenv("SNOWFLAKE_COPY_USERNAME"),
+            "password": os.getenv("SNOWFLAKE_COPY_PASSWORD"),
+            "role": os.getenv("SNOWFLAKE_COPY_ROLE"),
+            "warehouse": os.getenv("SNOWFLAKE_COPY_WAREHOUSE"),
+            "database": os.getenv("SNOWFLAKE_COPY_DATABASE"),
+            "schema": os.getenv("SNOWFLAKE_COPY_SCHEMA")
         }
         try:
             self.session = Session.builder.configs(connection_parameters).create()
-            self.copier = SnowflakeCopier(session=self.session, database=os.getenv("SNOWFLAKE_DATABASE"), schema=os.getenv("SNOWFLAKE_SCHEMA"))
+            self.copier = SnowflakeCopier(session=self.session, database=os.getenv("SNOWFLAKE_COPY_DATABASE"), schema=os.getenv("SNOWFLAKE_COPY_SCHEMA"))
         except Exception as e:  
             print(f'Error: {e}')
             exit()

@@ -3,11 +3,48 @@ import pandas as pd
 
 class SnowflakeCopier:
     
-    def __init__(self, session: Session, database: str, schema: str) -> None:
+    def __init__(self, session: Session) -> None:
         self.session = session
+        self.database = None
+        self.schema = None
+        self.sql_mappings = self.generate_sql_mappings()
+        
+    def get_database(self) -> str:
+        return self.database
+    
+    def get_schema(self) -> str:
+        return self.schema
+        
+    def set_database(self, database: str) -> None:
         self.database = database
+        try:
+            self.session.sql(f'USE DATABASE {database};').collect()
+        except Exception as e:
+            raise e
+        self.sql_mappings = self.generate_sql_mappings()
+        
+    def set_schema(self, schema: str) -> None:
         self.schema = schema
-        self.sql_mappings = {
+        try:
+            self.session.sql(f'USE SCHEMA {schema};').collect()
+        except Exception as e:
+            raise e
+        self.sql_mappings = self.generate_sql_mappings()
+        
+    def generate_sql_mappings(self) -> None:
+        return {
+            "DATABASE" : {
+                "list_query" : f'SHOW DATABASES;',
+                "list_field_name" : f'"name"',
+                "list_conditions" : [f" \"name\" != 'SNOWFLAKE'"],
+            },
+            
+            "SCHEMA" : {
+                "list_query" : f'SHOW SCHEMAS;',
+                "list_field_name" : f'"name"',
+                "list_conditions" : [" \"name\" != 'INFORMATION_SCHEMA' "]                
+            },
+            
             "TABLE" : {
                 "list_query" : f'SHOW TABLES;',
                 "list_field_name" : f'"name"',
@@ -58,7 +95,6 @@ class SnowflakeCopier:
                 "ddl_query" : f"SELECT 'CREATE OR REPLACE STAGE {self.database}.{self.schema}.<NAME>;' "
             }
         }
-        
         
     def get_object_list(self, snowflake_object_type: str) -> list:
         with self.session.query_history() as query_history:

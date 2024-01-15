@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+from pick import pick
 from dotenv import load_dotenv
 from datetime import datetime
 from snowflake.snowpark import Session
@@ -9,7 +10,7 @@ from modules.snowflake_copier import SnowflakeCopier
 # Load environment variables & local files
 load_dotenv(override=True)
 with open('config.json') as f:
-    config = json.load(f)['config']
+    config = json.load(f)['copy_configs']
     
 # Load local configuration settings
 SNOWFLAKE_OBJECTS = config['snowflake_objects']
@@ -47,6 +48,21 @@ def archive_warehouse(source_path, destination_path):
     shutil.copytree(source_path, filename)
     print(f'\nCopied files to archive fold, {filename}')
 
+def prompt_user_selection(options: list, title: str):
+    print(f"\nPlease choose a {title} to copy:\n")
+    for idx, element in enumerate(options, start=1):
+        print("{}) {}".format(idx, element))
+    
+    i = input("\nEnter number: ")
+    
+    try:
+        return options[int(i)-1] if 0 < int(i) <= len(options) else None
+    except ValueError:
+        return None
+
+
+
+
 if __name__ == '__main__':
     
     connection_parameters = {
@@ -55,8 +71,6 @@ if __name__ == '__main__':
     "password": os.getenv("SNOWFLAKE_COPY_PASSWORD"),
     "role": os.getenv("SNOWFLAKE_COPY_ROLE"),
     "warehouse": os.getenv("SNOWFLAKE_COPY_WAREHOUSE"),
-    "database": os.getenv("SNOWFLAKE_COPY_DATABASE"),
-    "schema": os.getenv("SNOWFLAKE_COPY_SCHEMA"),
     }
         
     try:
@@ -64,11 +78,21 @@ if __name__ == '__main__':
     except Exception as e:  
         print(f'Error: {e}')
         exit()
-    
+        
     setup_folders()
     
-    s = SnowflakeCopier(session=session, database=os.getenv("SNOWFLAKE_COPY_DATABASE"), schema=os.getenv("SNOWFLAKE_COPY_SCHEMA"))
-    print(s.session)
+    s = SnowflakeCopier(session=session)
+    
+    # User selects database
+    database_list = s.get_object_list('DATABASE')
+    active_database = prompt_user_selection(options=database_list, title='Database')
+    s.set_database(active_database)
+    
+    # User selects schema
+    schema_list = s.get_object_list('SCHEMA')
+    active_schema = prompt_user_selection(options=schema_list, title='Schema')
+    s.set_schema(active_schema)
+    
     
     # Infrastructure Deep Copy
     print('\n """ Infrastructure Copy """ ')
@@ -118,5 +142,5 @@ if __name__ == '__main__':
     
     
     """ Archive Data & Infrastructure """
-    archive_warehouse(source_path=STAGING_DIRECTORY, destination_path=f'archive/{os.getenv("SNOWFLAKE_COPY_DATABASE").lower()}_{os.getenv("SNOWFLAKE_COPY_SCHEMA").lower()}')
+    archive_warehouse(source_path=STAGING_DIRECTORY, destination_path=f'archive/{s.get_database().lower()}_{s.get_schema().lower()}')
     

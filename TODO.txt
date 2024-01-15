@@ -5,3 +5,9 @@ Features:
         EX: 
             ORGADMIN for: SELECT SYSTEM$ANACONDA_TERMS('ACCEPT');
             SYSADMIN for: creating Snowflake objects
+
+
+Bugs:
+    - configuration in copy_warehouse.py requires a WHERE statement (bad sql string building)
+    - table data copies CAN alter the table's data.
+        - EX: A String of '0000' gets converted to a string of '0' (likely a schema issue when going from pandas to snowflake DFs)
